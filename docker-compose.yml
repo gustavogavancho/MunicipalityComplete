@@ -1,0 +1,67 @@
+version: '3.9'
+
+services:
+  municipality.api:
+    build:
+      context: ./Municipality.Api
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    networks:
+      - municipality-network
+    volumes:
+      - ./Municipality.Api/localhost.pfx:/https/localhost.pfx
+
+  municipalitydemo.api:
+    build:
+      context: ./MunicipalityDemo.Api
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    networks:
+      - municipality-network
+    volumes:
+      - ./MunicipalityDemo.Api/localhost.pfx:/https/localhost.pfx
+
+  municipalitygeo.api:
+    build:
+      context: ./MunicipalityGeo.Api
+      dockerfile: Dockerfile
+    ports:
+      - "5002:5002"
+    networks:
+      - municipality-network
+    volumes:
+      - ./MunicipalityGeo.Api/localhost.pfx:/https/localhost.pfx
+
+  municipalitymeteo.api:
+    build:
+      context: ./MunicipalityMeteo.Api
+      dockerfile: Dockerfile
+    ports:
+      - "5003:5003"
+    networks:
+      - municipality-network
+    volumes:
+      - ./MunicipalityMeteo.Api/localhost.pfx:/https/localhost.pfx
+
+  municipalityorq.api:
+    build:
+      context: ./MunicipalityOrq.Api
+      dockerfile: Dockerfile
+    ports:
+      - "5004:5004"
+    environment:
+      - GEO_API_URL=http://municipalitygeo.api:5002
+      - METEO_API_URL=http://municipalitymeteo.api:5003
+    depends_on:
+      - municipalitygeo.api
+      - municipalitymeteo.api
+    networks:
+      - municipality-network
+    volumes:
+      - ./MunicipalityOrq.Api/localhost.pfx:/https/localhost.pfx
+
+networks:
+  municipality-network:
+    driver: bridge
