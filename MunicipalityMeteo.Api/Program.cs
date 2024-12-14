@@ -1,3 +1,4 @@
+using AutoMapper;
 using MunicipalityMeteo.Api.Profiles;
 using MunicipalityMeteo.Api.Services;
 

@@ -1,67 +1,71 @@
 version: '3.9'
-
 services:
-  municipality.api:
+  municipalityorq:
+    build:
+      context: ./MunicipalityOrq.Api
+      dockerfile: Dockerfile
+    ports:
+      - "5004:5000"
+    environment:
+      ASPNETCORE_URLS: "https://+:5000"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/localhost.pfx"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "gusgl0113"
+      GEO_API_URL: "https://municipalitygeo:5000"
+      METEO_API_URL: "https://municipalitymeteo:5000"  
+    volumes:
+      - ./MunicipalityOrq.Api/localhost.pfx:/https/localhost.pfx
+    depends_on:
+      - municipalitygeo
+      - municipalitymeteo
+
+  municipalitygeo:
+    build:
+      context: ./MunicipalityGeo.Api
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5000"
+    environment:
+      ASPNETCORE_URLS: "https://+:5000"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/localhost.pfx"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "gusgl0113"
+    volumes:
+      - ./MunicipalityGeo.Api/localhost.pfx:/https/localhost.pfx
+
+  municipalitymeteo:
+    build:
+      context: ./MunicipalityMeteo.Api
+      dockerfile: Dockerfile
+    ports:
+      - "5002:5000"
+    environment:
+      ASPNETCORE_URLS: "https://+:5000"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/localhost.pfx"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "gusgl0113"
+    volumes:
+      - ./MunicipalityMeteo.Api/localhost.pfx:/https/localhost.pfx
+
+  municipalitydemo:
+    build:
+      context: ./MunicipalityDemo.Api
+      dockerfile: Dockerfile
+    ports:
+      - "5003:5000"
+    environment:
+      ASPNETCORE_URLS: "https://+:5000"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/localhost.pfx"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "gusgl0113"
+    volumes:
+      - ./MunicipalityDemo.Api/localhost.pfx:/https/localhost.pfx
+
+  municipality:
     build:
       context: ./Municipality.Api
       dockerfile: Dockerfile
     ports:
       - "5000:5000"
-    networks:
-      - municipality-network
+    environment:
+      ASPNETCORE_URLS: "https://+:5000"
+      ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/localhost.pfx"
+      ASPNETCORE_Kestrel__Certificates__Default__Password: "gusgl0113"
     volumes:
       - ./Municipality.Api/localhost.pfx:/https/localhost.pfx
-
-  municipalitydemo.api:
-    build:
-      context: ./MunicipalityDemo.Api
-      dockerfile: Dockerfile
-    ports:
-      - "5001:5001"
-    networks:
-      - municipality-network
-    volumes:
-      - ./MunicipalityDemo.Api/localhost.pfx:/https/localhost.pfx
-
-  municipalitygeo.api:
-    build:
-      context: ./MunicipalityGeo.Api
-      dockerfile: Dockerfile
-    ports:
-      - "5002:5002"
-    networks:
-      - municipality-network
-    volumes:
-      - ./MunicipalityGeo.Api/localhost.pfx:/https/localhost.pfx
-
-  municipalitymeteo.api:
-    build:
-      context: ./MunicipalityMeteo.Api
-      dockerfile: Dockerfile
-    ports:
-      - "5003:5003"
-    networks:
-      - municipality-network
-    volumes:
-      - ./MunicipalityMeteo.Api/localhost.pfx:/https/localhost.pfx
-
-  municipalityorq.api:
-    build:
-      context: ./MunicipalityOrq.Api
-      dockerfile: Dockerfile
-    ports:
-      - "5004:5004"
-    environment:
-      - GEO_API_URL=http://municipalitygeo.api:5002
-      - METEO_API_URL=http://municipalitymeteo.api:5003
-    depends_on:
-      - municipalitygeo.api
-      - municipalitymeteo.api
-    networks:
-      - municipality-network
-    volumes:
-      - ./MunicipalityOrq.Api/localhost.pfx:/https/localhost.pfx
-
-networks:
-  municipality-network:
-    driver: bridge
